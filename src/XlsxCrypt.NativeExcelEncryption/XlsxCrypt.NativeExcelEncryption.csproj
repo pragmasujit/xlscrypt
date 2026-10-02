@@ -7,7 +7,7 @@
         <Nullable>enable</Nullable>
 
         <!-- Package -->
-        <PackageId>XlsCrypt.NativeExcelEncryption</PackageId>
+        <PackageId>XlsxCrypt.NativeExcelEncryption</PackageId>
         <Version>1.1.1</Version>
         <Authors>Sujit Tamang</Authors>
         <Description>Native .NET library for Excel workbook password encryption and decryption.</Description>
