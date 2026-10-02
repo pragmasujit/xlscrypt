@@ -8,7 +8,7 @@
 
         <!-- Package -->
         <PackageId>XlsCrypt.NativeExcelEncryption</PackageId>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <Authors>Sujit Tamang</Authors>
         <Description>Native .NET library for Excel workbook password encryption and decryption.</Description>
         <PackageTags>excel;xlsx;encryption;cryptography;office;security</PackageTags>
