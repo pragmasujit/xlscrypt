@@ -2,12 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>XlsCrypt.NativeExcelEncryption</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <authors>Sujit Tamang</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <readme>README.md</readme>
-    <description>Native .NET library for Excel workbook password encryption.</description>
+    <description>Native .NET library for Excel workbook password encryption and decryption.</description>
     <tags>excel xlsx encryption cryptography office security</tags>
     <repository type="git" commit="60be30e2adf41d5261761cc7f033d1b26889f47a" />
     <dependencies>
