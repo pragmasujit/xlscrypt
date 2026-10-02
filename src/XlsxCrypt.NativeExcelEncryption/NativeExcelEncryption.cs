@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace XlsxCrypt;
@@ -261,19 +262,19 @@ internal sealed class NativeExcelEncryption
         }
 
         byte[] passwordSalt =
-            RandomNumberGenerator.GetBytes(
+            GenerateRandomBytes(
                 SaltSize);
 
         byte[] keyDataSalt =
-            RandomNumberGenerator.GetBytes(
+            GenerateRandomBytes(
                 SaltSize);
 
         byte[] secretKey =
-            RandomNumberGenerator.GetBytes(
+            GenerateRandomBytes(
                 KeySize);
 
         byte[] verifierHashInput =
-            RandomNumberGenerator.GetBytes(
+            GenerateRandomBytes(
                 SaltSize);
 
         NativeExcelEncryption encryption =
@@ -311,7 +312,7 @@ internal sealed class NativeExcelEncryption
                 password);
 
         byte[] hash =
-            SHA512.HashData(
+            HashSha512(
                 Combine(
                     salt,
                     passwordBytes));
@@ -319,7 +320,7 @@ internal sealed class NativeExcelEncryption
         for (uint i = 0; i < (uint)spinCount; i++)
         {
             hash =
-                SHA512.HashData(
+                HashSha512(
                     Combine(
                         UInt32LittleEndian(i),
                         hash));
@@ -333,7 +334,7 @@ internal sealed class NativeExcelEncryption
         byte[] blockKey)
     {
         byte[] hash =
-            SHA512.HashData(
+            HashSha512(
                 Combine(
                     passwordHash,
                     blockKey));
@@ -390,7 +391,7 @@ internal sealed class NativeExcelEncryption
         // ------------------------------------------------------------
 
         byte[] verifierHash =
-            SHA512.HashData(
+            HashSha512(
                 _verifierHashInput);
 
         _encryptedVerifierHashValue =
@@ -480,7 +481,7 @@ internal sealed class NativeExcelEncryption
                 unchecked((uint)segmentNumber));
 
         byte[] hash =
-            SHA512.HashData(
+            HashSha512(
                 Combine(
                     keyDataSalt,
                     segment));
@@ -506,7 +507,7 @@ internal sealed class NativeExcelEncryption
         byte[] encryptedPackage)
     {
         byte[] hmacKey =
-            RandomNumberGenerator.GetBytes(
+            GenerateRandomBytes(
                 HashSize);
 
         byte[] hmacValue;
@@ -547,7 +548,7 @@ internal sealed class NativeExcelEncryption
         byte[] blockKey)
     {
         byte[] hash =
-            SHA512.HashData(
+            HashSha512(
                 Combine(
                     keyDataSalt,
                     blockKey));
@@ -728,7 +729,7 @@ internal sealed class NativeExcelEncryption
                 parameters.PasswordSalt);
 
         byte[] expectedVerifierHash =
-            SHA512.HashData(
+            HashSha512(
                 verifierInput);
 
         byte[] actualVerifierHash =
@@ -737,7 +738,7 @@ internal sealed class NativeExcelEncryption
                 verifierHashValueKey,
                 parameters.PasswordSalt);
 
-        if (!CryptographicOperations.FixedTimeEquals(
+        if (!FixedTimeEquals(
                 expectedVerifierHash,
                 actualVerifierHash))
         {
@@ -906,7 +907,7 @@ internal sealed class NativeExcelEncryption
                     encryptedPackage);
         }
 
-        if (!CryptographicOperations.FixedTimeEquals(
+        if (!FixedTimeEquals(
                 expectedHmac,
                 actualHmac))
         {
@@ -1110,6 +1111,44 @@ internal sealed class NativeExcelEncryption
         }
 
         return value;
+    }
+
+    // ========================================================================
+    // CRYPTO HELPERS (.NET Standard 2.0 compatible)
+    // ========================================================================
+
+    private static byte[] GenerateRandomBytes(int count)
+    {
+        byte[] bytes = new byte[count];
+        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(bytes);
+        }
+        return bytes;
+    }
+
+    private static byte[] HashSha512(byte[] data)
+    {
+        using (SHA512 sha512 = SHA512.Create())
+        {
+            return sha512.ComputeHash(data);
+        }
+    }
+
+    private static bool FixedTimeEquals(byte[] left, byte[] right)
+    {
+        if (left == null || right == null || left.Length != right.Length)
+        {
+            return false;
+        }
+
+        int result = 0;
+        for (int i = 0; i < left.Length; i++)
+        {
+            result |= left[i] ^ right[i];
+        }
+
+        return result == 0;
     }
 
     // ========================================================================
@@ -1332,14 +1371,14 @@ internal sealed class NativeExcelEncryption
 
     private sealed class EncryptionParameters
     {
-        public required byte[] PasswordSalt { get; init; }
-        public required byte[] KeyDataSalt { get; init; }
-        public required byte[] EncryptedVerifierHashInput { get; init; }
-        public required byte[] EncryptedVerifierHashValue { get; init; }
-        public required byte[] EncryptedKeyValue { get; init; }
-        public byte[]? EncryptedHmacKey { get; init; }
-        public byte[]? EncryptedHmacValue { get; init; }
-        public required int SpinCount { get; init; }
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+        public byte[] KeyDataSalt { get; set; } = Array.Empty<byte>();
+        public byte[] EncryptedVerifierHashInput { get; set; } = Array.Empty<byte>();
+        public byte[] EncryptedVerifierHashValue { get; set; } = Array.Empty<byte>();
+        public byte[] EncryptedKeyValue { get; set; } = Array.Empty<byte>();
+        public byte[]? EncryptedHmacKey { get; set; }
+        public byte[]? EncryptedHmacValue { get; set; }
+        public int SpinCount { get; set; }
     }
 }
 
@@ -2122,8 +2161,7 @@ internal static class OleCompoundFile
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
-                System.Threading.Thread.Sleep(
-                    100);
+                Thread.Sleep(100);
             }
         }
 

@@ -1,14 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
+
+        <LangVersion>latest</LangVersion>
 
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
         <!-- Package -->
         <PackageId>XlsxCrypt.NativeExcelEncryption</PackageId>
-        <Version>1.1.1</Version>
+        <Version>1.1.2</Version>
         <Authors>Sujit Tamang</Authors>
         <Description>Native .NET library for Excel workbook password encryption and decryption.</Description>
         <PackageTags>excel;xlsx;encryption;cryptography;office;security</PackageTags>
@@ -18,8 +20,14 @@
 
         <!-- README -->
         <PackageReadmeFile>README.md</PackageReadmeFile>
-
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+        <!-- NuGet metadata -->
+        <PackageProjectUrl>https://github.com/pragmasujit/xlsxcrypt</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/pragmasujit/xlsxcrypt</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+
+        <Copyright>Copyright (c) 2026 Sujit Tamang</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
