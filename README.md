@@ -1,4 +1,4 @@
-# XlsCrypt.NativeExcelEncryption
+# XlsxCrypt.NativeExcelEncryption
 
 Native .NET library for password-based encryption and decryption of Excel `.xlsx` workbooks.
 
@@ -22,13 +22,13 @@ Native .NET library for password-based encryption and decryption of Excel `.xlsx
 Install the NuGet package:
 
 ```bash
-dotnet add package XlsCrypt.NativeExcelEncryption
+dotnet add package XlsxCrypt.NativeExcelEncryption
 ```
 
 Or using the NuGet Package Manager:
 
 ```powershell
-Install-Package XlsCrypt.NativeExcelEncryption
+Install-Package XlsxCrypt.NativeExcelEncryption
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ Install-Package XlsCrypt.NativeExcelEncryption
 ```csharp
 using XlsxCrypt;
 
-NativeExcelEncryption.EncryptFile(
+ExcelEncryption.EncryptFile(
     "input.xlsx",
     "encrypted.xlsx",
     "your-password");
@@ -49,7 +49,7 @@ NativeExcelEncryption.EncryptFile(
 ```csharp
 using XlsxCrypt;
 
-NativeExcelEncryption.DecryptFile(
+ExcelEncryption.DecryptFile(
     "encrypted.xlsx",
     "decrypted.xlsx",
     "your-password");
@@ -66,20 +66,24 @@ string decryptedFile = @"C:\Excel\decrypted.xlsx";
 
 string password = "StrongPassword123!";
 
-NativeExcelEncryption.EncryptFile(
+// Encrypt unencrypted .xlsx
+ExcelEncryption.EncryptFile(
     inputFile,
     encryptedFile,
     password);
 
-NativeExcelEncryption.DecryptFile(
+// Decrypt password-protected .xlsx
+ExcelEncryption.DecryptFile(
     encryptedFile,
     decryptedFile,
     password);
 ```
 
+> **Note:** `NativeExcelEncryption.EncryptFile` and `NativeExcelEncryption.DecryptFile` are also available as direct entry points.
+
 ## How It Works
 
-XlsCrypt uses Microsoft's Office Agile Encryption format to protect `.xlsx` workbooks.
+XlsxCrypt uses Microsoft's Office Agile Encryption format to protect `.xlsx` workbooks.
 
 The workbook package is encrypted using AES-256-CBC with 4096-byte segments. The encrypted package, encryption metadata, and Office DataSpaces information are stored in an OLE Compound File.
 
@@ -98,9 +102,9 @@ The encryption process includes:
 
 Decryption reverses this process and verifies the password and encrypted package integrity before producing the original `.xlsx` workbook.
 
-## Why XlsCrypt?
+## Why XlsxCrypt?
 
-XlsCrypt provides a native .NET approach to Excel workbook encryption without requiring:
+XlsxCrypt provides a native .NET approach to Excel workbook encryption without requiring:
 
 * EPPlus
 * ClosedXML
@@ -136,6 +140,13 @@ This project has not been presented as a replacement for a formal security revie
 * .NET 10
 * Windows
 
+## Release Notes
+
+### v1.1.1
+* Fixed Office Agile Encryption data integrity HMAC key size for SHA-512 compliance.
+* Fixed OLE Compound File DataSpaces structure, alignment, and version metadata streams.
+* Added full workbook decryption support (`DecryptFile`) with package integrity and password verification.
+
 ## License
 
 MIT License.
@@ -146,10 +157,10 @@ See the [LICENSE](LICENSE) file for the complete license text.
 
 Source code and development history are available on GitHub:
 
-https://github.com/pragmasujit/xlsxcrypt
+https://github.com/pragmasujit/xlscrypt
 
 ## Disclaimer
 
-XlsCrypt.NativeExcelEncryption is an independent open-source project and is not affiliated with, sponsored by, or endorsed by Microsoft Corporation.
+XlsxCrypt.NativeExcelEncryption is an independent open-source project and is not affiliated with, sponsored by, or endorsed by Microsoft Corporation.
 
 Excel and Microsoft Office are trademarks of Microsoft Corporation.
